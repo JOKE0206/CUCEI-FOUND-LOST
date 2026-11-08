@@ -17,9 +17,20 @@ function readSecret(name: string): string | undefined {
   return value;
 }
 
+const DEFAULT_ALLOWED_EMAIL_DOMAINS = ["udg.mx", "alumnos.udg.mx"];
+
+function readDomainList(name: string): string[] {
+  const domains = (process.env[name] ?? "")
+    .split(",")
+    .map((domain) => domain.trim().toLowerCase())
+    .filter(Boolean);
+  return domains.length > 0 ? domains : DEFAULT_ALLOWED_EMAIL_DOMAINS;
+}
+
 export const env = {
   port: Number(process.env.PORT) || 4000,
   frontendUrl: process.env.FRONTEND_URL?.trim() || "http://localhost:3000",
+  allowedEmailDomains: readDomainList("ALLOWED_EMAIL_DOMAINS"),
   supabaseUrl: readSecret("SUPABASE_URL"),
   supabaseServiceRoleKey: readSecret("SUPABASE_SERVICE_ROLE_KEY"),
 };
