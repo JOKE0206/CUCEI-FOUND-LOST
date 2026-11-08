@@ -1,0 +1,27 @@
+{
+  "name": "cucei-found-lost-backend",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "dev": "node node_modules/tsx/dist/cli.mjs watch src/server.ts",
+    "build": "node node_modules/typescript/bin/tsc",
+    "start": "node dist/server.js",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "cucei-found-lost",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plataforma universitaria para publicar y recuperar objetos perdidos y encontrados en CUCEI",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "dev": "node node_modules/concurrently/dist/bin/index.js --names backend,frontend --prefix-colors blue,green \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
+  }
+}
