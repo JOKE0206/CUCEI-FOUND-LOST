@@ -8,7 +8,7 @@ Plataforma universitaria para publicar y recuperar objetos perdidos y encontrado
 | `backend/` | Node.js, Express, TypeScript (arquitectura modular) |
 | Datos y servicios | Supabase con PostgreSQL |
 
-**Estado actual:** el backend implementa autenticación, publicaciones, reclamaciones, chat, campus, reportes y administración. El frontend de estas funciones sigue pendiente. Para configurar la base de datos, consulta [backend/database/README.md](backend/database/README.md).
+**Estado actual:** el backend implementa autenticación, publicaciones, reclamaciones, chat, campus, reportes y administración. El frontend implementa todas estas funciones sobre la API `/api/v1`. Para configurar la base de datos, consulta [backend/database/README.md](backend/database/README.md).
 
 ## Requisitos
 

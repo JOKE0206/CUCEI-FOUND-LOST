@@ -1,26 +1,540 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-pizarron: #16211e;
+  --color-superficie: #1f2c28;
+  --color-linea: #3a4b45;
+  --color-gis: #f0ede2;
+  --color-ceniza: #a3afa8;
+  --color-manila: #dec9a0;
+  --color-coral: #ee9a86;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base móvil */
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-pizarron);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-pizarron);
+    color: var(--color-gis);
+    line-height: 1.5;
+  }
+
+  /* 16 px evita que iOS acerque la página al enfocar un campo. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  button,
+  a,
+  [role="button"],
+  label,
+  summary {
+    touch-action: manipulation;
+  }
+
+  button,
+  [role="button"] {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-manila);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Tipografía: el eje de anchura de Archivo hace el trabajo de una segunda familia. */
+  .object-title {
+    font-stretch: 72%;
+    font-weight: 750;
+    line-height: 1.04;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+    font-stretch: 78%;
+    font-weight: 700;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 650;
+    line-height: 1.25;
+  }
+
+  .muted {
+    color: var(--color-ceniza);
+  }
+
+  .prose-body {
+    max-width: 68ch;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+  }
+
+  /* Botones */
+  .btn {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 10px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 650;
+    text-align: center;
+    transition:
+      transform 120ms var(--ease-out),
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .btn:disabled {
+    opacity: 0.55;
+  }
+
+  .btn-primary {
+    background: var(--color-manila);
+    color: var(--color-pizarron);
+  }
+
+  .btn-secondary {
+    border: 1.5px solid var(--color-ceniza);
+    color: var(--color-gis);
+  }
+
+  .btn-danger {
+    border: 1.5px solid var(--color-coral);
+    color: var(--color-coral);
+  }
+
+  .btn-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--color-gis);
+    font-weight: 550;
+    text-decoration: underline;
+    text-decoration-color: var(--color-ceniza);
+    text-underline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover:not(:disabled) {
+      background: #e9d8b6;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--color-superficie);
+      border-color: var(--color-gis);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: var(--color-superficie);
+    }
+
+    .btn-link:hover {
+      text-decoration-color: var(--color-gis);
+    }
+  }
+
+  /* Campos: el borde Ceniza tiene contraste 7.28 sobre Pizarrón y 6.39 sobre Superficie. */
+  .control {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid var(--color-ceniza);
+    border-radius: 8px;
+    background: var(--color-superficie);
+    padding: 0.625rem 0.875rem;
+    color: var(--color-gis);
+  }
+
+  .control::placeholder {
+    color: var(--color-ceniza);
+  }
+
+  .control:focus-visible {
+    border-color: var(--color-manila);
+  }
+
+  .control[aria-invalid="true"] {
+    border-color: var(--color-coral);
+  }
+
+  .control:disabled {
+    opacity: 0.6;
+  }
+
+  textarea.control {
+    resize: vertical;
+  }
+
+  /* Selector de una sola opción (Todos, Encontrados, Perdidos). */
+  .segmented {
+    display: inline-flex;
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1.5px solid var(--color-ceniza);
+    border-radius: 10px;
+    padding: 3px;
+  }
+
+  .segmented-item {
+    min-height: 40px;
+    border-radius: 7px;
+    padding: 0.25rem 0.875rem;
+    font-weight: 600;
+    color: var(--color-gis);
+    white-space: nowrap;
+    transition: background-color 150ms ease;
+  }
+
+  .segmented-item[aria-pressed="true"],
+  .segmented-item[aria-selected="true"] {
+    background: var(--color-manila);
+    color: var(--color-pizarron);
+  }
+
+  /* Opción grande: tipo de objeto y destino de un reporte. */
+  .choice {
+    display: flex;
+    min-height: 56px;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1.5px solid var(--color-ceniza);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+  }
+
+  .choice:has(input:checked) {
+    border-color: var(--color-manila);
+    background: var(--color-superficie);
+  }
+
+  .choice:has(input:focus-visible) {
+    outline: 2px solid var(--color-manila);
+    outline-offset: 2px;
+  }
+
+  .choice input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-manila);
+  }
+
+  /* La etiqueta: silueta con esquinas cortadas, orificio y contenido. */
+  .tag {
+    --cut: 16px;
+    position: relative;
+    display: block;
+    clip-path: polygon(
+      var(--cut) 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      0 100%,
+      0 var(--cut)
+    );
+    transition: transform 120ms var(--ease-out);
+  }
+
+  a.tag:active {
+    transform: scale(0.985);
+  }
+
+  /* El recorte de la silueta oculta un contorno externo: el foco va por dentro. */
+  a.tag:focus-visible {
+    outline-offset: -5px;
+  }
+
+  .tag[data-kind="found"] {
+    background: var(--color-manila);
+    color: var(--color-pizarron);
+  }
+
+  .tag[data-kind="found"]:focus-visible {
+    outline-color: var(--color-pizarron);
+  }
+
+  .tag[data-kind="lost"] {
+    background: var(--color-ceniza);
+    color: var(--color-gis);
+  }
+
+  /* El relleno Pizarrón deja a la vista 1.5 px de Ceniza: el contorno del objeto ausente. */
+  .tag[data-kind="lost"]::before {
+    position: absolute;
+    inset: 1.5px;
+    background: var(--color-pizarron);
+    clip-path: polygon(
+      calc(var(--cut) - 0.6px) 0,
+      calc(100% - var(--cut) + 0.6px) 0,
+      100% calc(var(--cut) - 0.6px),
+      100% 100%,
+      0 100%,
+      0 calc(var(--cut) - 0.6px)
+    );
+    content: "";
+  }
+
+  .tag > * {
+    position: relative;
+  }
+
+  .tag-hole {
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    z-index: 1;
+    width: 13px;
+    height: 13px;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: var(--color-pizarron);
+    box-shadow: 0 0 0 1.5px var(--color-manila);
+  }
+
+  .tag[data-kind="lost"] .tag-hole {
+    box-shadow: 0 0 0 1.5px var(--color-ceniza);
+  }
+
+  .kind-label {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 5px;
+    padding: 0.0625rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 650;
+  }
+
+  .tag[data-kind="found"] .kind-label {
+    background: var(--color-pizarron);
+    color: var(--color-manila);
+  }
+
+  .tag[data-kind="lost"] .kind-label {
+    border: 1.5px solid var(--color-ceniza);
+    color: var(--color-gis);
+  }
+
+  .status-label {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid currentColor;
+    border-radius: 5px;
+    padding: 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  /* El boleto de una reclamación: cuerpo, perforación y talón. */
+  .ticket-body {
+    border-radius: 12px 12px 0 0;
+    background: var(--color-superficie);
+    padding: 1rem;
+  }
+
+  .perforation {
+    height: 12px;
+    background-color: var(--color-superficie);
+    background-image: radial-gradient(
+      circle,
+      var(--color-pizarron) 3.5px,
+      transparent 4px
+    );
+    background-position: center;
+    background-size: 16px 12px;
+    background-repeat: repeat-x;
+  }
+
+  .ticket-stub {
+    border-radius: 0 0 12px 12px;
+    background: var(--color-superficie);
+    padding: 0.75rem 1rem 1rem;
+    transform-origin: 0 0;
+  }
+
+  .ticket[data-state="torn"] .perforation {
+    background-color: transparent;
+    background-image: none;
+    height: 0;
+  }
+
+  .ticket[data-state="torn"] .ticket-body {
+    border-radius: 12px;
+  }
+
+  /* El margen sustituye a la perforación: el resto de la página no se mueve. */
+  .ticket[data-state="torn"] .ticket-stub {
+    margin-top: 12px;
+    border-radius: 12px;
+    background: var(--color-manila);
+    color: var(--color-pizarron);
+  }
+
+  /* El rasgado solo mueve el talón; el enlace al chat ya funciona desde el primer cuadro. */
+  .ticket[data-just-torn="true"] .ticket-stub {
+    animation: tear 260ms var(--ease-out) both;
+  }
+
+  .ticket-stub .btn-open-chat {
+    background: var(--color-pizarron);
+    color: var(--color-manila);
+  }
+
+  .ticket-stub .btn-open-chat:focus-visible {
+    outline-color: var(--color-pizarron);
+  }
+
+  /* Navegación */
+  .nav-item {
+    display: flex;
+    min-height: 56px;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--color-ceniza);
+    font-size: 0.75rem;
+    font-weight: 550;
+  }
+
+  .nav-item[aria-current="page"] {
+    color: var(--color-manila);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--color-ceniza);
+    font-weight: 600;
+  }
+
+  .nav-link[aria-current="page"] {
+    color: var(--color-manila);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav-link:hover {
+      color: var(--color-gis);
+    }
+  }
+
+  /* Hojas inferiores */
+  .sheet-body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Mensajes del chat */
+  .chat-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bubble {
+    max-width: min(80%, 34rem);
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .bubble[data-mine="true"] {
+    background: var(--color-manila);
+    color: var(--color-pizarron);
+  }
+
+  .bubble[data-mine="false"] {
+    background: var(--color-superficie);
+    color: var(--color-gis);
+  }
+
+  .bottom-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .placeholder-block {
+    border-radius: 12px;
+    background: var(--color-superficie);
+  }
+}
+
+@keyframes tear {
+  0% {
+    transform: translateY(-12px);
+  }
+
+  45% {
+    transform: translateY(-3px) rotate(1.4deg);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes tear-reduced {
+  from {
+    opacity: 0.4;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Menos movimiento: se conserva el cambio de color y opacidad, sin desplazamiento. */
+@media (prefers-reduced-motion: reduce) {
+  .ticket[data-just-torn="true"] .ticket-stub {
+    animation: tear-reduced 160ms ease both;
+  }
+
+  .btn:active:not(:disabled),
+  a.tag:active {
+    transform: none;
+  }
+
+  [data-vaul-drawer] {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
 }
