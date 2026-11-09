@@ -1,13 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Field, FormError } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 
 // Aviso temprano para evitar un correo inútil. Quien autoriza es el backend.
 const INSTITUTIONAL_EMAIL = /^[^\s@]+@(alumnos\.)?udg\.mx$/i;
+
+const subscribeToNothing = () => () => {};
+const linkFailedInUrl = () => new URLSearchParams(window.location.search).get("error") === "enlace";
 
 export default function EntrarPage() {
   const { auth } = useAuth();
@@ -17,6 +20,7 @@ export default function EntrarPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [sentTo, setSentTo] = useState<string | null>(null);
+  const linkFailed = useSyncExternalStore(subscribeToNothing, linkFailedInUrl, () => false);
 
   useEffect(() => {
     if (auth.status === "signed-in") router.replace("/");
@@ -39,7 +43,7 @@ export default function EntrarPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: address,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     setBusy(false);
 
@@ -91,7 +95,7 @@ export default function EntrarPage() {
               />
             )}
           </Field>
-          <FormError message={formError} />
+          <FormError message={formError ?? (linkFailed ? "Ese enlace ya no es válido. Ábrelo en el dispositivo donde lo pediste o solicita uno nuevo." : null)} />
           {!isSupabaseConfigured && <FormError message="El acceso todavía no está configurado en este entorno." />}
           <button type="submit" className="btn btn-primary w-full" disabled={busy || !isSupabaseConfigured}>
             {busy ? "Enviando enlace" : "Enviar enlace de acceso"}
